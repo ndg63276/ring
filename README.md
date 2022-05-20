@@ -1,4 +1,4 @@
-# Smart Life / Tuya web interface
+# Ring web interface
 
 ## Instructions to run your own
 1. Clone this repository

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://www.w3.org/2005/10/profile">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-164510568-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag("js", new Date());
+
+        gtag("config", "UA-164510568-1");
+    </script>
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="Control your Ring devices through your web browser.">
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <link rel="icon" type="image/png" href="short_logo_trans.png">
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="css-grid.css">
+    <title>SmartAtHome.co.uk - My Ring Devices</title>
+    <script src="general_functions.js"></script>
+    <script src="functions.js"></script>
+</head>
+<body>
+<div id="page" data-role="page">
+    <center>
+        <img src="RingLogo.jpg" class="overlay">
+        <a href="../index.html"><img src="long_logo.png" alt="smartathome.co.uk logo" id="logo"></a>
+        <a href="../index.html"><img src="long_logo_dark.png" alt="smartathome.co.uk logo" id="logo_dark"
+                                     class="hidden"></a>
+        <br/><br/>
+        <div class="hidden" id="login">
+            <label for="username">Ring Username: </label>
+            <div class="in-line-div"><input id="username"></div>
+            <br/>
+            <label for="password">Ring Password: </label>
+            <div class="in-line-div"><input type="password" id="password"></div>
+            <br/>
+            <label for="region">Authenticator code: </label>
+            <div class="in-line-div"><input id="otpcode"></div>
+            <br/>
+            <div class="in-line-div"><input type="checkbox" id="storecreds"></div>
+            <label for="storecreds"> Keep me logged in</label><br/><br/>
+            <div class="in-line-div"><input type="submit" value="Submit" onclick="return do_login();"></div>
+            <br/>
+            <a href="safe.html">Is this safe?</a>
+            <div id="loginfailed"></div>
+        </div>
+        <div class="loader" id="loader"></div>
+    <div class="hidden" id="buttons">
+        <div class="in-line-div">
+            <button onclick="checkTheme()" class="borderShadow">&#9681; Theme</button>
+        </div>
+        <div class="in-line-div">
+            <label for="autorefresh" class="borderShadow"> Autorefresh</label>
+            <input type="checkbox" name="autorefresh" id="autorefresh">
+        </div>
+        <div class="in-line-div">
+            <button onclick="update_devices(true)" class="ui-btn ui-icon-refresh ui-btn-icon-left ui-shadow ui-corner-all borderShadow">Refresh</button>
+        </div>
+        <div class="in-line-div">
+            <button onclick="logout()" class="ui-btn ui-icon-action ui-btn-icon-left ui-shadow ui-corner-all borderShadow">Logout</button>
+        </div>
+    </div>
+    </center>
+    <div class="" id="devices"></div>
+    <div id="myCookieConsent">
+        <a id="cookieButton" onClick="acceptCookies()">Understood</a>
+        <div>This website is using cookies. <a href="../cookies.html">More details</a></div>
+    </div>
+</div><!-- /page -->
+</body>
+</html>

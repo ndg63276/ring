@@ -26,6 +26,7 @@ const API_URI = "https://api.ring.com"
 const NEW_SESSION_ENDPOINT = "/clients_api/session"
 const DEVICES_ENDPOINT = "/clients_api/ring_devices"
 const CHIMES_ENDPOINT = "/clients_api/chimes/"
+const DOORBELLS_ENDPOINT = "/clients_api/doorbots/"
 
 const API_VERSION = "9"
 
@@ -124,6 +125,31 @@ function get_device_list(refresh_access_token) {
 			to_return["devices"] = json;
 			to_return["success"] = true;
 			localStorage.devices = JSON.stringify(to_return["devices"]);
+		}
+	});
+	return to_return
+}
+
+function get_history(id) {
+	to_return = {};
+	var url = API_URI + DOORBELLS_ENDPOINT + id + "/history";
+	var headers = {
+		"Authorization": "Bearer " + user_info["ring_access_token"]
+	}
+	data = {
+		"api_version": API_VERSION,
+		"limit": 10,
+	}
+	$.ajax({
+		url: proxyurl + url,
+		type: "GET",
+		headers: headers,
+		data: data,
+		dataType: "json",
+		async: false,
+		success: function (json) {
+			console.log(json);
+			to_return = json;
 		}
 	});
 	return to_return

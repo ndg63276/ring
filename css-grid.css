@@ -92,3 +92,70 @@ body[data-theme='b'] {
 .colorSelectorTd{
     vertical-align: middle;
 }
+
+.small {
+    font-size: 85%;
+}
+
+.outer {
+    position: fixed;
+    top: 30%;
+    left: 0px;
+    width: 90%;
+    height: 1px;
+    overflow: visible;
+    z-index: 10;
+}
+
+.inner {
+    width: 420px;
+    height: 375px;
+    margin-left: -175px; /*** width / 2 ***/
+    position: absolute;
+    padding: 0px 50px 60px;
+    top: -100px; /*** height / 2 ***/
+    left: 50%;
+    background: white;
+    border: 5px solid black;
+}
+
+ul {
+  list-style-type: disc;
+}
+
+/* Remove default bullets */
+/* Remove margins and padding from the parent ul */
+#myUL {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style the caret/arrow */
+.caret {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+.nested {
+  display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+  display: block;
+}

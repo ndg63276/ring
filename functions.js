@@ -130,8 +130,13 @@ function get_device_list(refresh_access_token) {
 	return to_return
 }
 
+function close_history() {
+	document.getElementById("historyOuter").classList.add("hidden");
+}
+
 function get_history(id) {
-	to_return = {};
+	var history = document.getElementById("historyInner");
+	var historyinnerHTML = "<br /><br />";
 	var url = API_URI + DOORBELLS_ENDPOINT + id + "/history";
 	var headers = {
 		"Authorization": "Bearer " + user_info["ring_access_token"]
@@ -149,10 +154,43 @@ function get_history(id) {
 		async: false,
 		success: function (json) {
 			console.log(json);
-			to_return = json;
+			historyinnerHTML += "<ul id='myUL'>";
+			for (key in json) {
+				createdAt = moment(json[key]["created_at"]).format("ddd Do MMM HH:mm:ss");
+				kind = json[key]["kind"];
+				doorbot = json[key]["doorbot"]["description"];
+				recording = json[key]["recording"]["status"];
+				answered = json[key]["answered"] ? "(answered)" : "(not answered)";
+				historyinnerHTML += "<li><span class='caret'>" + createdAt + "</span>";
+				historyinnerHTML += "<ul class='nested'>";
+				historyinnerHTML += "<li>Doorbot: " + doorbot + "</li>"
+				historyinnerHTML += "<li>Kind: " + kind + " " + answered + "</li>"
+				historyinnerHTML += "<li>Recording: " + recording + "</li>"
+				historyinnerHTML += "</ul></li>"
+			}
+			historyinnerHTML += "</ul><br /><br />";
+			historyinnerHTML += "<center><button onclick='close_history()'>Close</button></center>";
+			history.innerHTML = historyinnerHTML;
 		}
 	});
-	return to_return
+	var toggler = document.getElementsByClassName("caret");
+	for (var i=0; i<toggler.length; i++) {
+		toggler[i].addEventListener("click", function() {
+			thisNest = this.parentElement.querySelector(".nested");
+			thisNestActive = thisNest.classList.contains("active");
+			for (el of document.getElementsByClassName("nested")) {
+				el.classList.remove("active");
+			}
+			for (el of document.getElementsByClassName("caret")) {
+				el.classList.remove("caret-down");
+			}
+			if (!thisNestActive) {
+				thisNest.classList.add("active");
+				this.classList.add("caret-down");
+			}
+		});
+	}
+	document.getElementById("historyOuter").classList.remove("hidden");
 }
 
 function test_chime(id, kind) {
@@ -303,11 +341,21 @@ function update_devices(force_update) {
 			table.appendChild(tr);
 			tr = createElement("tr");
 			td = createElement("td");
-			text = document.createTextNode(singular(capitalise(device_type)));
+			td.classList.add("small");
+			text = document.createTextNode("("+singular(capitalise(device_type))+")");
 			td.appendChild(text);
 			tr.appendChild(td);
 			table.appendChild(tr);
-
+			if (device_type == "doorbots") {
+				tr = createElement("tr");
+				td = createElement("td");
+				button = createElement("button");
+				button.innerHTML = "Show history";
+				button.onclick = function() {get_history(thisId)};
+				td.appendChild(button);
+				tr.appendChild(td);
+				table.appendChild(tr);
+			}
 			if (device_type == "chimes") {
 				tr = createElement("tr");
 				td = createElement("td");

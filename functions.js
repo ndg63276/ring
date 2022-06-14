@@ -376,6 +376,23 @@ function update_devices(force_update) {
 			tr.appendChild(td);
 			table.appendChild(tr);
 			if (device_type == "doorbots") {
+				bat1 = thisDevice["battery_life"] || null;
+				bat2 = thisDevice["battery_life_2"] || null;
+				if (bat1 != null || bat2 != null) {
+					battery = 0;
+					if (bat1 != null) {
+						battery += parseInt(bat1);
+					}
+					if (bat2 != null) {
+						battery += parseInt(bat2);
+					}
+					tr = createElement("tr");
+					td = createElement("td");
+					text = document.createTextNode("Battery: " + battery + "%");
+					td.appendChild(text);
+					tr.appendChild(td);
+					table.appendChild(tr);
+				}
 				tr = createElement("tr");
 				td = createElement("td");
 				button = createElement("button");

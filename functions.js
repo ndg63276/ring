@@ -17,17 +17,17 @@ if (approvedHosts.includes(location.host)) {
 	proxyurl = defaultCorsServer;
 }
 
-const user_agent = "sdfghjklabcdef/1.0"
-const hardware_id = 'a0b6c35c-8f77-43ef-a197-f7e69a915d54'
-const OAUTH_URI = "https://oauth.ring.com/oauth/token"
-const CLIENT_ID = "ring_official_android"
-const CLIENT_SECRET = ""
-const API_URI = "https://api.ring.com"
-const NEW_SESSION_ENDPOINT = "/clients_api/session"
-const DEVICES_ENDPOINT = "/clients_api/ring_devices"
-const CHIMES_ENDPOINT = "/clients_api/chimes/"
-const DOORBELLS_ENDPOINT = "/clients_api/doorbots/"
-
+const user_agent = "sdfghjklabcdef/1.0";
+const hardware_id = "a0b6c35c-8f77-43ef-a197-f7e69a915d54";
+const OAUTH_URI = "https://oauth.ring.com/oauth/token";
+const CLIENT_ID = "ring_official_android";
+const CLIENT_SECRET = "";
+const API_URI = "https://api.ring.com";
+const NEW_SESSION_ENDPOINT = "/clients_api/session";
+const DEVICES_ENDPOINT = "/clients_api/ring_devices";
+const CHIMES_ENDPOINT = "/clients_api/chimes/";
+const DOORBELLS_ENDPOINT = "/clients_api/doorbots/";
+const LIGHTS_ENDPOINT = "/floodlight_light_";
 const API_VERSION = "9"
 
 var user_info = {};
@@ -241,6 +241,35 @@ function set_volume(id, volume) {
 	return to_return
 }
 
+function toggle_light(id, state) {
+	var url = API_URI + DOORBELLS_ENDPOINT + id + LIGHTS_ENDPOINT + state;
+	var headers = {
+		"Authorization": "Bearer " + user_info["ring_access_token"]
+	}
+	data = {
+		"api_version": API_VERSION,
+	}
+	$.ajax({
+		url: proxyurl + url,
+		type: "PUT",
+		headers: headers,
+		data: jQuery.param(data),
+		dataType: "json",
+		async: false,
+		success: function (json) {
+			console.log(json);
+			button = document.getElementById(id + "_light");
+			if (state == "on") {
+				button.innerHTML = "Turn light off";
+				button.onclick = function() {toggle_light(id, "off")};
+			} else {
+				button.innerHTML = "Turn light on";
+				button.onclick = function() {toggle_light(id, "on")};
+			}
+		}
+	});
+}
+
 
 function refresh_token() {
 	params = { "grant_type": "refresh_token", "refresh_token": user_info["ring_refresh_token"] }
@@ -352,6 +381,22 @@ function update_devices(force_update) {
 				button = createElement("button");
 				button.innerHTML = "Show history";
 				button.onclick = function() {get_history(thisId)};
+				td.appendChild(button);
+				tr.appendChild(td);
+				table.appendChild(tr);
+			}
+			if (device_type == "stickup_cams" && "led_status" in thisDevice) {
+				tr = createElement("tr");
+				td = createElement("td");
+				button = createElement("button");
+				button.id = thisId + "_light";
+				if (thisDevice["led_status"] == "on") {
+					button.innerHTML = "Turn light off";
+					button.onclick = function() {toggle_light(thisId, "off")};
+				} else {
+					button.innerHTML = "Turn light on";
+					button.onclick = function() {toggle_light(thisId, "on")};
+				}
 				td.appendChild(button);
 				tr.appendChild(td);
 				table.appendChild(tr);

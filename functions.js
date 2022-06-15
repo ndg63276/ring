@@ -393,8 +393,12 @@ function update_devices(force_update) {
 				}
 				tr = createElement("tr");
 				online = thisDevice["health"]["connected"] ? "Online" : "Offline";
-				text = document.createTextNode("Network status: " + online);
+				text = document.createTextNode("Network status: ");
+				span = createElement("span");
+				span.classList.add(online == "Online" ? "green" : "red");
+				span.innerHTML = online;
 				tr.appendChild(text);
+				tr.appendChild(span);
 				table.appendChild(tr);
 				tr = createElement("tr");
 				strength = thisDevice["health"]["rssi"];
@@ -413,8 +417,12 @@ function update_devices(force_update) {
 				table.appendChild(tr);
 				tr = createElement("tr");
 				firmwareStatus = thisDevice["health"]["firmware_version_status"];
-				text = document.createTextNode("Firmware status: " + firmwareStatus);
+				text = document.createTextNode("Firmware status: ");
+				span = createElement("span");
+				span.classList.add(firmwareStatus == "Up to Date" ? "green" : "red");
+				span.innerHTML = firmwareStatus;
 				tr.appendChild(text);
+				tr.appendChild(span);
 				table.appendChild(tr);
 				tr = createElement("tr");
 				button = createElement("button");

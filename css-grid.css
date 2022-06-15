@@ -159,3 +159,11 @@ ul {
 .active {
   display: block;
 }
+
+.green {
+	color: green;
+}
+
+.red {
+	color:red;
+}

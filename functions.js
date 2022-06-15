@@ -451,11 +451,15 @@ function update_devices(force_update) {
 				tr.appendChild(button);
 				table.appendChild(tr);
 				tr = createElement("tr");
+				text = document.createTextNode("Volume:");
+				br = createElement("br");
 				slider = createElement("input");
 				slider.type = "range";
 				slider.max = 10;
 				slider.value = thisDevice["settings"]["volume"];
 				slider.onchange = function() { set_volume(thisId, this.value) };
+				tr.appendChild(text);
+				tr.appendChild(br);
 				tr.appendChild(slider);
 				table.appendChild(tr);
 			}

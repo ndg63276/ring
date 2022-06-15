@@ -28,7 +28,7 @@ const DEVICES_ENDPOINT = "/clients_api/ring_devices";
 const CHIMES_ENDPOINT = "/clients_api/chimes/";
 const DOORBELLS_ENDPOINT = "/clients_api/doorbots/";
 const LIGHTS_ENDPOINT = "/floodlight_light_";
-const API_VERSION = "9"
+const API_VERSION = "9";
 
 var user_info = {};
 
@@ -387,24 +387,44 @@ function update_devices(force_update) {
 						battery += parseInt(bat2);
 					}
 					tr = createElement("tr");
-					td = createElement("td");
 					text = document.createTextNode("Battery: " + battery + "%");
-					td.appendChild(text);
-					tr.appendChild(td);
+					tr.appendChild(text);
 					table.appendChild(tr);
 				}
 				tr = createElement("tr");
-				td = createElement("td");
+				online = thisDevice["health"]["connected"] ? "Online" : "Offline";
+				text = document.createTextNode("Network status: " + online);
+				tr.appendChild(text);
+				table.appendChild(tr);
+				tr = createElement("tr");
+				strength = thisDevice["health"]["rssi"];
+				text = document.createTextNode("Signal strength: RSSI " + strength);
+				tr.appendChild(text);
+				table.appendChild(tr);
+				tr = createElement("tr");
+				healthcheck = new Date(thisDevice["health"]["last_update_time"]*1000);
+				text = document.createTextNode("Last health check: " + healthcheck.toLocaleString());
+				tr.appendChild(text);
+				table.appendChild(tr);
+				tr = createElement("tr");
+				firmware = thisDevice["health"]["firmware_version"];
+				text = document.createTextNode("Firmware version: " + firmware);
+				tr.appendChild(text);
+				table.appendChild(tr);
+				tr = createElement("tr");
+				firmwareStatus = thisDevice["health"]["firmware_version_status"];
+				text = document.createTextNode("Firmware status: " + firmwareStatus);
+				tr.appendChild(text);
+				table.appendChild(tr);
+				tr = createElement("tr");
 				button = createElement("button");
 				button.innerHTML = "Show history";
 				button.onclick = function() {get_history(thisId)};
-				td.appendChild(button);
-				tr.appendChild(td);
+				tr.appendChild(button);
 				table.appendChild(tr);
 			}
 			if (device_type == "stickup_cams" && "led_status" in thisDevice) {
 				tr = createElement("tr");
-				td = createElement("td");
 				button = createElement("button");
 				button.id = thisId + "_light";
 				if (thisDevice["led_status"] == "on") {
@@ -414,36 +434,29 @@ function update_devices(force_update) {
 					button.innerHTML = "Turn light on";
 					button.onclick = function() {toggle_light(thisId, "on")};
 				}
-				td.appendChild(button);
-				tr.appendChild(td);
+				tr.appendChild(button);
 				table.appendChild(tr);
 			}
 			if (device_type == "chimes") {
 				tr = createElement("tr");
-				td = createElement("td");
 				button = createElement("button");
 				button.innerHTML = "Test Ring";
 				button.onclick = function() {test_chime(thisId, "ding")};
-				td.appendChild(button);
-				tr.appendChild(td);
+				tr.appendChild(button);
 				table.appendChild(tr);
 				tr = createElement("tr");
-				td = createElement("td");
 				button = createElement("button");
 				button.innerHTML = "Test Motion";
 				button.onclick = function() {test_chime(thisId, "motion")};
-				td.appendChild(button);
-				tr.appendChild(td);
+				tr.appendChild(button);
 				table.appendChild(tr);
 				tr = createElement("tr");
-				td = createElement("td");
 				slider = createElement("input");
 				slider.type = "range";
 				slider.max = 10;
 				slider.value = thisDevice["settings"]["volume"];
 				slider.onchange = function() { set_volume(thisId, this.value) };
-				td.appendChild(slider);
-				tr.appendChild(td);
+				tr.appendChild(slider);
 				table.appendChild(tr);
 			}
 			div.appendChild(table);

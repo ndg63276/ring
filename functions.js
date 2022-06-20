@@ -150,9 +150,11 @@ function get_history(id) {
 		type: "GET",
 		headers: headers,
 		data: data,
-		dataType: "json",
+		dataType: "text",
 		async: false,
-		success: function (json) {
+		success: function (text) {
+			let stringedJSON = text.replace(/:\s*([-+Ee0-9.]{10,})/g, ': "id$1"');
+			let json = JSON.parse(stringedJSON);
 			console.log(json);
 			historyinnerHTML += "<ul id='myUL'>";
 			for (key in json) {

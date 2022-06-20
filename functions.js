@@ -28,6 +28,7 @@ const DEVICES_ENDPOINT = "/clients_api/ring_devices";
 const CHIMES_ENDPOINT = "/clients_api/chimes/";
 const DOORBELLS_ENDPOINT = "/clients_api/doorbots/";
 const LIGHTS_ENDPOINT = "/floodlight_light_";
+const URL_RECORDING = "/clients_api/dings/"
 const API_VERSION = "9";
 
 var user_info = {};
@@ -130,6 +131,34 @@ function get_device_list(refresh_access_token) {
 	return to_return
 }
 
+function get_recording_url(id) {
+	refresh_token();
+	var el = document.getElementById(id);
+	if (id.startsWith("id")) {
+		id = id.substr(2);
+	}
+	var url = API_URI + URL_RECORDING + id + "/share/play";
+	var headers = {
+		"Authorization": "Bearer " + user_info["ring_access_token"]
+	}
+	data = {
+		"api_version": API_VERSION
+	}
+	$.ajax({
+		url: proxyurl + url,
+		type: "GET",
+		headers: headers,
+		data: data,
+		dataType: "json",
+		async: false,
+		success: function (json) {
+			console.log(json);
+			el.href = json["url"];
+			el.target = "_blank";
+		}
+	});
+}
+
 function close_history() {
 	document.getElementById("historyOuter").classList.add("hidden");
 }
@@ -162,6 +191,11 @@ function get_history(id) {
 				kind = json[key]["kind"];
 				doorbot = json[key]["doorbot"]["description"];
 				recording = json[key]["recording"]["status"];
+				if (recording == "ready") {
+					dingId = json[key]["id"];
+					recording = "<a id='"+dingId+"' href='#' onclick='get_recording_url(\""
+					recording += dingId + "\")'>Show</a>"
+				}
 				answered = json[key]["answered"] ? "(answered)" : "(not answered)";
 				historyinnerHTML += "<li><span class='caret'>" + createdAt + "</span>";
 				historyinnerHTML += "<ul class='nested'>";

@@ -108,6 +108,11 @@ body[data-theme='b'] {
 }
 
 .inner {
+    background: white;
+    border: 5px solid black;
+}
+
+.history {
     width: 420px;
     height: 375px;
     margin-left: -175px; /*** width / 2 ***/
@@ -115,8 +120,16 @@ body[data-theme='b'] {
     padding: 0px 50px 60px;
     top: -100px; /*** height / 2 ***/
     left: 50%;
-    background: white;
-    border: 5px solid black;
+}
+
+.snapshot {
+    width: 640px;
+    height: 440px;
+    margin-left: -320px; /*** width / 2 ***/
+    margin-top: -180px; /*** height / 2 ***/
+    position: absolute;
+    padding: 50px;
+    left: 50%;
 }
 
 ul {

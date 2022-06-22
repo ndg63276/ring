@@ -1,3 +1,5 @@
+var snapshotresponse;
+
 // Main source: https://github.com/tchellomello/python-ring-doorbell
 
 // Insert the address of your cors anywhere server here, eg
@@ -29,6 +31,8 @@ const CHIMES_ENDPOINT = "/clients_api/chimes/";
 const DOORBELLS_ENDPOINT = "/clients_api/doorbots/";
 const LIGHTS_ENDPOINT = "/floodlight_light_";
 const URL_RECORDING = "/clients_api/dings/"
+const SNAPSHOT_TIMESTAMP_ENDPOINT = "/clients_api/snapshots/timestamps";
+const SNAPSHOT_ENDPOINT = "/clients_api/snapshots/image/";
 const API_VERSION = "9";
 
 var user_info = {};
@@ -159,8 +163,59 @@ function get_recording_url(id) {
 	});
 }
 
+function get_snapshot(id, snapshotTimestamp) {
+	var timestamp = moment(snapshotTimestamp);
+	document.getElementById("snapshotTimestamp").innerHTML = timestamp;
+	var snapshot = document.getElementById("snapshot");
+	var url = API_URI + SNAPSHOT_ENDPOINT + id;
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 200){
+			console.log(this.response, typeof this.response);
+			snapshot.src = URL.createObjectURL(this.response);
+			document.getElementById("snapshotOuter").classList.remove("hidden");
+			snapshot.classList.remove("hidden");
+		}
+	}
+	xhr.open("GET", proxyurl + url);
+	xhr.setRequestHeader("Authorization", "Bearer " + user_info["ring_access_token"]);
+	xhr.responseType = 'blob';
+	xhr.send();
+}
+
+function check_for_snapshots(id) {
+	var to_return = false;
+	var url = API_URI + SNAPSHOT_TIMESTAMP_ENDPOINT;
+	var headers = {
+		"Authorization": "Bearer " + user_info["ring_access_token"]
+	}
+	data = {
+		"doorbot_ids": [id]
+	}
+	$.ajax({
+		url: proxyurl + url,
+		type: "POST",
+		headers: headers,
+		data: JSON.stringify(data),
+		dataType: "json",
+		async: false,
+		success: function (json) {
+			console.log(json);
+			if ("timestamps" in json && json["timestamps"].length > 0) {
+				to_return = json["timestamps"][0]["timestamp"];
+				console.log(to_return);
+			}
+		}
+	});
+	return to_return;
+}
+
 function close_history() {
 	document.getElementById("historyOuter").classList.add("hidden");
+}
+
+function close_snapshot() {
+	document.getElementById("snapshotOuter").classList.add("hidden");
 }
 
 function get_history(id) {
@@ -466,6 +521,15 @@ function update_devices(force_update) {
 				button.onclick = function() {get_history(thisId)};
 				tr.appendChild(button);
 				table.appendChild(tr);
+				let snapshotTimestamp = check_for_snapshots(thisId);
+				if (snapshotTimestamp != false) {
+					tr = createElement("tr");
+					button = createElement("button");
+					button.innerHTML = "Show snapshot";
+					button.onclick = function() {get_snapshot(thisId, snapshotTimestamp)};
+					tr.appendChild(button);
+					table.appendChild(tr);
+				}
 			}
 			if (device_type == "stickup_cams" && "led_status" in thisDevice) {
 				tr = createElement("tr");

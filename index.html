@@ -57,17 +57,21 @@
                                      class="hidden"></a>
         <br/><br/>
         <div class="hidden" id="login">
+            <div id="usernameWrapper">
             <label for="username">Ring Username: </label>
-            <div class="in-line-div"><input id="username"></div>
+            <div class="in-line-div"><input id="username"></div></div>
             <br/>
+            <div id="passwordWrapper">
             <label for="password">Ring Password: </label>
-            <div class="in-line-div"><input type="password" id="password"></div>
+            <div class="in-line-div"><input type="password" id="password"></div></div>
             <br/>
-            <label for="otpcode">Authenticator code: </label>
-            <div class="in-line-div"><input id="otpcode"></div>
+            <div class="hidden" id="otpcodeWrapper">
+            <label id="otpcodeLabel" for="otpcode">Authenticator code: </label>
+            <div class="in-line-div"><input id="otpcode"></div></div>
             <br/>
+            <div id="storecredsWrapper">
             <div class="in-line-div"><input type="checkbox" id="storecreds"></div>
-            <label for="storecreds"> Keep me logged in</label><br/><br/>
+            <label for="storecreds"> Keep me logged in</label><br/><br/></div>
             <div class="in-line-div"><input type="submit" value="Submit" onclick="return do_login();"></div>
             <br/>
             <a href="safe.html">Is this safe?</a>

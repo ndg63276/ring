@@ -40,6 +40,11 @@ var user_info = {};
 // Jquery ready is deprecated since 3.0
 $(document).ready(function () {
 	testFirstCookie();
+	document.getElementById("password").onkeydown = function (e) {
+		if (e.key === 'Enter') {
+			do_login();
+		}
+	};
 	document.getElementById("otpcode").onkeydown = function (e) {
 		if (e.key === 'Enter') {
 			do_login();
@@ -88,6 +93,24 @@ function login(username, password, otpcode, storecreds) {
 		async: false,
 		success: function (json) {
 			store_tokens(json, storecreds);
+		},
+		error: function (response) {
+			json = response["responseJSON"];
+			console.log(json);
+			if ("tsv_state" in json && json["tsv_state"] == "sms") {
+				document.getElementById("usernameWrapper").classList.add("hidden");
+				document.getElementById("passwordWrapper").classList.add("hidden");
+				document.getElementById("storecredsWrapper").classList.add("hidden");
+				phoneNumber = json["phone"];
+				document.getElementById("otpcodeLabel").innerHTML = "Please enter the code sent to "+phoneNumber+":";
+				document.getElementById("otpcodeWrapper").classList.remove("hidden");
+			} else if ("tsv_state" in json && json["tsv_state"] == "totp") {
+				document.getElementById("usernameWrapper").classList.add("hidden");
+				document.getElementById("passwordWrapper").classList.add("hidden");
+				document.getElementById("storecredsWrapper").classList.add("hidden");
+				document.getElementById("otpcodeLabel").innerHTML = "Please enter the code from your authenticator app:";
+				document.getElementById("otpcodeWrapper").classList.remove("hidden");
+			}
 		}
 	});
 }

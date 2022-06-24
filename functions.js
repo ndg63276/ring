@@ -509,7 +509,7 @@ function update_devices(force_update) {
 			td.appendChild(text);
 			tr.appendChild(td);
 			table.appendChild(tr);
-			if (device_type == "doorbots") {
+			if (device_type == "doorbots" || device_type == "authorized_doorbots") {
 				bat1 = thisDevice["battery_life"] || null;
 				bat2 = thisDevice["battery_life_2"] || null;
 				if (bat1 != null || bat2 != null) {
@@ -615,8 +615,8 @@ function update_devices(force_update) {
 				table.appendChild(tr);
 			}
 			div.appendChild(table);
+			devicesDiv.appendChild(div);
 		}
-		devicesDiv.appendChild(div);
 	}
 }
 

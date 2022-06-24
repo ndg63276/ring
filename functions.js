@@ -73,9 +73,12 @@ $(document).ready(function () {
 function login(username, password, otpcode, storecreds) {
 	var headers = {
 		"hardware_id": hardware_id,
-		"2fa-support": "true",
-		"2fa-code": otpcode,
+		"2fa-support": "false",
 		"Authorization": "Basic " + btoa(CLIENT_ID + ":" + CLIENT_SECRET)
+	}
+	if (otpcode != "") {
+		headers["2fa-support"] = "true";
+		headers["2fa-code"] = otpcode;
 	}
 	var data = {
 		'grant_type': 'password',
@@ -104,12 +107,18 @@ function login(username, password, otpcode, storecreds) {
 				phoneNumber = json["phone"];
 				document.getElementById("otpcodeLabel").innerHTML = "Please enter the code sent to "+phoneNumber+":";
 				document.getElementById("otpcodeWrapper").classList.remove("hidden");
+				setTimeout(function() {
+					document.getElementById("otpcode").focus();
+				}, 0);
 			} else if ("tsv_state" in json && json["tsv_state"] == "totp") {
 				document.getElementById("usernameWrapper").classList.add("hidden");
 				document.getElementById("passwordWrapper").classList.add("hidden");
 				document.getElementById("storecredsWrapper").classList.add("hidden");
 				document.getElementById("otpcodeLabel").innerHTML = "Please enter the code from your authenticator app:";
 				document.getElementById("otpcodeWrapper").classList.remove("hidden");
+				setTimeout(function() {
+					document.getElementById("otpcode").focus();
+				}, 0);
 			}
 		}
 	});
@@ -607,6 +616,9 @@ function on_logout() {
 	login_div.classList.remove("hidden");
 	var loader_div = document.getElementById("loader");
 	loader_div.classList.add("hidden");
+	setTimeout(function() {
+		document.getElementById("username").focus();
+	}, 1000);
 }
 
 function logout() {

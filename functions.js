@@ -119,6 +119,17 @@ function login(username, password, otpcode, storecreds) {
 				setTimeout(function() {
 					document.getElementById("otpcode").focus();
 				}, 0);
+			} else if ("tsv_state" in json && json["tsv_state"] == "email") {
+				document.getElementById("usernameWrapper").classList.add("hidden");
+				document.getElementById("passwordWrapper").classList.add("hidden");
+				document.getElementById("storecredsWrapper").classList.add("hidden");
+				phoneNumber = json["phone"];
+				document.getElementById("otpcodeLabel").innerHTML = "An email has been sent to "+phoneNumber;
+				document.getElementById("otpcodeLabel").innerHTML += ". Follow the instrcutions to generate a verification code:";
+				document.getElementById("otpcodeWrapper").classList.remove("hidden");
+				setTimeout(function() {
+					document.getElementById("otpcode").focus();
+				}, 0);
 			}
 		}
 	});

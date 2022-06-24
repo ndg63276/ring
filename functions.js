@@ -493,7 +493,6 @@ function update_devices(force_update) {
 		for (device in devices[device_type]) {
 			thisDevice = devices[device_type][device];
 			console.log("  device: " + thisDevice["id"]);
-			let thisId = thisDevice["id"];
 			div = createElement("div", "gridElem singleDevice borderShadow ui-btn"); // ui-btn-up-b ui-btn-hover-b");
 			table = createElement("table");
 			tr = createElement("tr");
@@ -510,114 +509,132 @@ function update_devices(force_update) {
 			tr.appendChild(td);
 			table.appendChild(tr);
 			if (device_type == "doorbots" || device_type == "authorized_doorbots") {
-				bat1 = thisDevice["battery_life"] || null;
-				bat2 = thisDevice["battery_life_2"] || null;
-				if (bat1 != null || bat2 != null) {
-					battery = 0;
-					if (bat1 != null) {
-						battery += parseInt(bat1);
-					}
-					if (bat2 != null) {
-						battery += parseInt(bat2);
-					}
-					tr = createElement("tr");
-					text = document.createTextNode("Battery: " + battery + "%");
-					tr.appendChild(text);
-					table.appendChild(tr);
-				}
-				tr = createElement("tr");
-				online = thisDevice["health"]["connected"] ? "Online" : "Offline";
-				text = document.createTextNode("Network status: ");
-				span = createElement("span");
-				span.classList.add(online == "Online" ? "green" : "red");
-				span.innerHTML = online;
-				tr.appendChild(text);
-				tr.appendChild(span);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				strength = thisDevice["health"]["rssi"];
-				text = document.createTextNode("Signal strength: RSSI " + strength);
-				tr.appendChild(text);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				healthcheck = new Date(thisDevice["health"]["last_update_time"]*1000);
-				text = document.createTextNode("Last health check: " + healthcheck.toLocaleString());
-				tr.appendChild(text);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				firmware = thisDevice["health"]["firmware_version"];
-				text = document.createTextNode("Firmware version: " + firmware);
-				tr.appendChild(text);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				firmwareStatus = thisDevice["health"]["firmware_version_status"];
-				text = document.createTextNode("Firmware status: ");
-				span = createElement("span");
-				span.classList.add(firmwareStatus == "Up to Date" ? "green" : "red");
-				span.innerHTML = firmwareStatus;
-				tr.appendChild(text);
-				tr.appendChild(span);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				button = createElement("button");
-				button.innerHTML = "Show history";
-				button.onclick = function() {get_history(thisId)};
-				tr.appendChild(button);
-				table.appendChild(tr);
-				let snapshotTimestamp = check_for_snapshots(thisId);
-				if (snapshotTimestamp != false) {
-					tr = createElement("tr");
-					button = createElement("button");
-					button.innerHTML = "Show snapshot";
-					button.onclick = function() {get_snapshot(thisId, snapshotTimestamp)};
-					tr.appendChild(button);
-					table.appendChild(tr);
-				}
+				table = setUpDoorbots(thisDevice, table);
 			}
 			if (device_type == "stickup_cams" && "led_status" in thisDevice) {
-				tr = createElement("tr");
-				button = createElement("button");
-				button.id = thisId + "_light";
-				if (thisDevice["led_status"] == "on") {
-					button.innerHTML = "Turn light off";
-					button.onclick = function() {toggle_light(thisId, "off")};
-				} else {
-					button.innerHTML = "Turn light on";
-					button.onclick = function() {toggle_light(thisId, "on")};
-				}
-				tr.appendChild(button);
-				table.appendChild(tr);
+				table = setUpStickupCams(thisDevice, table);
 			}
 			if (device_type == "chimes") {
-				tr = createElement("tr");
-				button = createElement("button");
-				button.innerHTML = "Test Ring";
-				button.onclick = function() {test_chime(thisId, "ding")};
-				tr.appendChild(button);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				button = createElement("button");
-				button.innerHTML = "Test Motion";
-				button.onclick = function() {test_chime(thisId, "motion")};
-				tr.appendChild(button);
-				table.appendChild(tr);
-				tr = createElement("tr");
-				text = document.createTextNode("Volume:");
-				br = createElement("br");
-				slider = createElement("input");
-				slider.type = "range";
-				slider.max = 10;
-				slider.value = thisDevice["settings"]["volume"];
-				slider.onchange = function() { set_volume(thisId, this.value) };
-				tr.appendChild(text);
-				tr.appendChild(br);
-				tr.appendChild(slider);
-				table.appendChild(tr);
+				table = setUpChimes(thisDevice, table);
 			}
 			div.appendChild(table);
 			devicesDiv.appendChild(div);
 		}
 	}
+}
+
+function setUpChimes(thisDevice, table) {
+	let thisId = thisDevice["id"];
+	tr = createElement("tr");
+	button = createElement("button");
+	button.innerHTML = "Test Ring";
+	button.onclick = function() {test_chime(thisId, "ding")};
+	tr.appendChild(button);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	button = createElement("button");
+	button.innerHTML = "Test Motion";
+	button.onclick = function() {test_chime(thisId, "motion")};
+	tr.appendChild(button);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	text = document.createTextNode("Volume:");
+	br = createElement("br");
+	slider = createElement("input");
+	slider.type = "range";
+	slider.max = 10;
+	slider.value = thisDevice["settings"]["volume"];
+	slider.onchange = function() { set_volume(thisId, this.value) };
+	tr.appendChild(text);
+	tr.appendChild(br);
+	tr.appendChild(slider);
+	table.appendChild(tr);
+	return table;
+}
+
+function setUpStickupCams(thisDevice, table) {
+	let thisId = thisDevice["id"];
+	tr = createElement("tr");
+	button = createElement("button");
+	button.id = thisId + "_light";
+	if (thisDevice["led_status"] == "on") {
+		button.innerHTML = "Turn light off";
+		button.onclick = function() {toggle_light(thisId, "off")};
+	} else {
+		button.innerHTML = "Turn light on";
+		button.onclick = function() {toggle_light(thisId, "on")};
+	}
+	tr.appendChild(button);
+	table.appendChild(tr);
+	return table
+}
+
+function setUpDoorbots(thisDevice, table) {
+	let thisId = thisDevice["id"];
+	bat1 = thisDevice["battery_life"] || null;
+	bat2 = thisDevice["battery_life_2"] || null;
+	if (bat1 != null || bat2 != null) {
+		battery = 0;
+		if (bat1 != null) {
+			battery += parseInt(bat1);
+		}
+		if (bat2 != null) {
+			battery += parseInt(bat2);
+		}
+		tr = createElement("tr");
+		text = document.createTextNode("Battery: " + battery + "%");
+		tr.appendChild(text);
+		table.appendChild(tr);
+	}
+	tr = createElement("tr");
+	online = thisDevice["health"]["connected"] ? "Online" : "Offline";
+	text = document.createTextNode("Network status: ");
+	span = createElement("span");
+	span.classList.add(online == "Online" ? "green" : "red");
+	span.innerHTML = online;
+	tr.appendChild(text);
+	tr.appendChild(span);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	strength = thisDevice["health"]["rssi"];
+	text = document.createTextNode("Signal strength: RSSI " + strength);
+	tr.appendChild(text);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	healthcheck = new Date(thisDevice["health"]["last_update_time"]*1000);
+	text = document.createTextNode("Last health check: " + healthcheck.toLocaleString());
+	tr.appendChild(text);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	firmware = thisDevice["health"]["firmware_version"];
+	text = document.createTextNode("Firmware version: " + firmware);
+	tr.appendChild(text);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	firmwareStatus = thisDevice["health"]["firmware_version_status"];
+	text = document.createTextNode("Firmware status: ");
+	span = createElement("span");
+	span.classList.add(firmwareStatus == "Up to Date" ? "green" : "red");
+	span.innerHTML = firmwareStatus;
+	tr.appendChild(text);
+	tr.appendChild(span);
+	table.appendChild(tr);
+	tr = createElement("tr");
+	button = createElement("button");
+	button.innerHTML = "Show history";
+	button.onclick = function() {get_history(thisId)};
+	tr.appendChild(button);
+	table.appendChild(tr);
+	let snapshotTimestamp = check_for_snapshots(thisId);
+	if (snapshotTimestamp != false) {
+		tr = createElement("tr");
+		button = createElement("button");
+		button.innerHTML = "Show snapshot";
+		button.onclick = function() {get_snapshot(thisId, snapshotTimestamp)};
+		tr.appendChild(button);
+		table.appendChild(tr);
+	}
+	return table;
 }
 
 function on_logout() {

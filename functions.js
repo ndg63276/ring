@@ -505,7 +505,7 @@ function update_devices(force_update) {
 			tr = createElement("tr");
 			td = createElement("td");
 			td.classList.add("small");
-			text = document.createTextNode("("+singular(capitalise(device_type))+")");
+			text = document.createTextNode("("+tidyDeviceTypes(device_type)+")");
 			td.appendChild(text);
 			tr.appendChild(td);
 			table.appendChild(tr);
@@ -656,4 +656,14 @@ function singular(text) {
 		text = text.slice(0, -1);
 	}
 	return text;
+}
+
+
+function tidyDeviceTypes(str) {
+	str = str.replace("doorbot", "doorbell");
+	str = str.replace("authorized", "shared");
+	str = capitalise(str);
+	str = str.replaceAll("_", " ");
+	str = singular(str);
+	return str;
 }
